@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 /// <summary>
+/// made with the help of the following tutorial: https://www.codeproject.com/Articles/1106622/Building-REST-services-with-ASP-NET-Core-Web-API-a
 /// to create an executable run from console: dotnet publish -c Release -r win10-x64
 /// also add <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers> to the .csproj file
 /// for the database use the following in T-SQL (obviously change the connstring):
