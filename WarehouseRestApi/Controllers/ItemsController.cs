@@ -8,8 +8,6 @@ using Belgrade.SqlClient;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-
-
 namespace WarehouseRestApi.Controllers
 {
     [Produces("application/json")]
@@ -91,7 +89,7 @@ namespace WarehouseRestApi.Controllers
                                 where Id = @id
                                 ");
             cmd.Parameters.AddWithValue("id", id);
-            cmd.Parameters.AddWithValue("todo", items);
+            cmd.Parameters.AddWithValue("items", items);
             await SqlCommand.Exec(cmd);
         }
 
