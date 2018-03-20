@@ -13,7 +13,7 @@ namespace WarehouseRestApi.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", "value2" };
+            return new string[] { "server", "is", "running" };
         }
 
         // GET api/values/5
