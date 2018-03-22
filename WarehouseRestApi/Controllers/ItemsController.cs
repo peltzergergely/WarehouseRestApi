@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WarehouseRestApi.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Items")]
+    [Route("api/Items/")]
     public class ItemsController : Controller
     {
         private readonly IQueryPipe SqlPipe;
@@ -32,13 +32,14 @@ namespace WarehouseRestApi.Controllers
 
         // GET: api/Items/5
         [HttpGet("{id}")]
-        public async Task Get(int id)
+        public async Task GetById(int id)
         {
             var cmd = new SqlCommand("select * from Items where Id = @id FOR JSON PATH, WITHOUT_ARRAY_WRAPPER");
             cmd.Parameters.AddWithValue("id", id);
             await SqlPipe.Stream(cmd, Response.Body, "{}");
         }
 
+        // POST: api/Items
         // POST: api/Items
         [HttpPost]
         public async Task Post()
@@ -48,7 +49,10 @@ namespace WarehouseRestApi.Controllers
                                     @"insert into Items
                                         select *
                                         from OPENJSON(@items)
-                                        WITH(Name nvarchar(200), Owner nvarchar(100), Pos int)");
+                                        WITH(Name nvarchar(200), 
+                                            OwnerId int, 
+                                            Location int, 
+                                            Status nvarchar(20))");
             cmd.Parameters.AddWithValue("Items", items);
             await SqlCommand.Exec(cmd);
         }
@@ -61,18 +65,19 @@ namespace WarehouseRestApi.Controllers
             var cmd = new SqlCommand(
                                     @"update Items
                                         set Name = json.Name,
-                                        Owner = json.Owner,
-                                        Pos = json.Pos
+                                        OwnerId = json.OwnerId,
+                                        Location = json.Location,
+                                        Status = json.Status
                                     from OPENJSON( @items )
-                                         WITH(Name nvarchar(200), Owner nvarchar(100),
-                                            Pos int) AS json
+                                        WITH(Name nvarchar(200), OwnerId int, 
+                                        Location int, Status varchar(20)) AS json
                                         where Id = @id");
             cmd.Parameters.AddWithValue("id", id);
             cmd.Parameters.AddWithValue("items", items);
             await SqlCommand.Exec(cmd);
         }
 
-        // PATCH api/Todo
+        // PATCH api/Items
         [HttpPatch]
         public async Task Patch(int id)
         {
@@ -80,12 +85,12 @@ namespace WarehouseRestApi.Controllers
             var cmd = new SqlCommand(
                                 @"update Items
                                      set Name = ISNULL(json.Name, Name),
-                                     Owner = ISNULL(json.Owner, Owner),
-                                     Pos = ISNULL(json.Pos, Pos)
-                                from OPENJSON(@items)
-                                WITH(Name nvarchar(200), 
-                                     Owner nvarchar(100),
-                                     Pos int) AS json
+                                     OwnerId = ISNULL(json.OwnerId, OwnerId),
+                                     Location = ISNULL(json.Location, Location),
+                                     Status = ISNULL(json.Status, Status)
+                                from OPENJSON( @items )
+                                    WITH(Name nvarchar(200), OwnerId int, 
+                                    Location int, Status nvarchar(20)) AS json
                                 where Id = @id
                                 ");
             cmd.Parameters.AddWithValue("id", id);
