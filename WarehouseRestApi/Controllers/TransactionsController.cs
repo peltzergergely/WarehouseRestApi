@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -44,42 +45,27 @@ namespace WarehouseRestApi.Controllers
         public async Task Post()
         {
             string transaction = new StreamReader(Request.Body).ReadToEnd();
-            var cmd = new SqlCommand(
-                                    @"insert into Transactions
-                                        select *
-                                        from OPENJSON(@Transactions)
-                                      WITH(
-                                           OrderId int,
-                                           Gate int,
-                                           Time nvarchar(50),
-                                           Location int,
-                                           Direction nvarchar(20),
-                                           TimeStamp datetime,
-                                           DispatcherId int
-                                        )");
-            cmd.Parameters.AddWithValue("Transactions", transaction);
+            var cmd = new SqlCommand("dbo.InsertTransaction")
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("transaction", transaction);
             await SqlCommand.Exec(cmd);
         }
 
-        //// PUT: api/Orders/5
-        //[HttpPut("{id}")]
-        //public async Task Put(int id)
-        //{
-        //    string transaction = new StreamReader(Request.Body).ReadToEnd();
-        //    var cmd = new SqlCommand(
-        //                            @"update Transactions
-        //                                set Name = json.Name,
-        //                                OwnerId = json.OwnerId,
-        //                                Location = json.Location,
-        //                                Status = json.Status
-        //                            from OPENJSON( @transaction )
-        //                                WITH(Name nvarchar(200), OwnerId int, 
-        //                                Location int, Status(nvarchar20)) AS json
-        //                                where Id = @id");
-        //    cmd.Parameters.AddWithValue("id", id);
-        //    cmd.Parameters.AddWithValue("Transactions", transaction);
-        //    await SqlCommand.Exec(cmd);
-        //}
+        // PUT: api/Orders/5
+        [HttpPut("{id}")]
+        public async Task Put(int id)
+        {
+            string transaction = new StreamReader(Request.Body).ReadToEnd();
+            var cmd = new SqlCommand("dbo.UpdateTransactionById")
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("id", id);
+            cmd.Parameters.AddWithValue("Transactions", transaction);
+            await SqlCommand.Exec(cmd);
+        }
 
         // DELETE api/Transactions/5
         [HttpDelete("{id}")]

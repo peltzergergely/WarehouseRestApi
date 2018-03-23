@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -30,6 +31,7 @@ namespace WarehouseRestApi.Controllers
             await SqlPipe.Stream("select * from Orders FOR JSON PATH", Response.Body, "[]");
         }
 
+
         // GET: api/Orders/5
         [HttpGet("{id}")]
         public async Task Get(int id)
@@ -44,17 +46,10 @@ namespace WarehouseRestApi.Controllers
         public async Task Post()
         {
             string orders = new StreamReader(Request.Body).ReadToEnd();
-            var cmd = new SqlCommand(
-                                    @"insert into Orders
-                                        select *
-                                        from OPENJSON(@orders)
-                                      WITH(CostumerId int,
-                                           ItemName nvarchar(50),
-                                           Quantity int,
-                                           Status nvarchar(20),
-                                           Direction nvarchar(20),
-                                           TimeStamp datetime
-                                        )");
+            var cmd = new SqlCommand("dbo.InsertOrder")
+            {
+                CommandType = CommandType.StoredProcedure
+            };
             cmd.Parameters.AddWithValue("Orders", orders);
             await SqlCommand.Exec(cmd);
         }
@@ -64,22 +59,10 @@ namespace WarehouseRestApi.Controllers
         public async Task Put(int id)
         {
             string orders = new StreamReader(Request.Body).ReadToEnd();
-            var cmd = new SqlCommand(
-                                    @"update orders
-                                        set CostumerId = json.CostumerId,
-                                        ItemName = json.ItemName,
-                                        Quantity = json.Quantity,
-                                        Status = json.Status,
-                                        Direction = json.Direction,
-                                        TimeStamp = json.TimeStamp
-                                    from OPENJSON( @orders )
-                                        WITH(CostumerId int,
-                                           ItemName nvarchar(50),
-                                           Quantity int,
-                                           Status nvarchar(20),
-                                           Direction nvarchar(20),
-                                           TimeStamp datetime) AS json
-                                        where Id = @id");
+            var cmd = new SqlCommand("dbo.UpdateOrderById")
+            {
+                CommandType = CommandType.StoredProcedure
+            };
             cmd.Parameters.AddWithValue("id", id);
             cmd.Parameters.AddWithValue("orders", orders);
             await SqlCommand.Exec(cmd);

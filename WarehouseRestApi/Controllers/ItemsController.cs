@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -27,33 +28,31 @@ namespace WarehouseRestApi.Controllers
         [HttpGet]
         public async Task Get()
         {
-            await SqlPipe.Stream("select * from Items FOR JSON PATH", Response.Body, "[]");
+            await SqlPipe.Stream("dbo.SelectAllItems", Response.Body, "[]");
         }
 
         // GET: api/Items/5
         [HttpGet("{id}")]
         public async Task GetById(int id)
         {
-            var cmd = new SqlCommand("select * from Items where Id = @id FOR JSON PATH, WITHOUT_ARRAY_WRAPPER");
+            var cmd = new SqlCommand("dbo.GetItemById")
+            {
+                CommandType = CommandType.StoredProcedure
+            };
             cmd.Parameters.AddWithValue("id", id);
             await SqlPipe.Stream(cmd, Response.Body, "{}");
         }
 
         // POST: api/Items
-        // POST: api/Items
         [HttpPost]
         public async Task Post()
         {
             string items = new StreamReader(Request.Body).ReadToEnd();
-            var cmd = new SqlCommand(
-                                    @"insert into Items
-                                        select *
-                                        from OPENJSON(@items)
-                                        WITH(Name nvarchar(200), 
-                                            OwnerId int, 
-                                            Location int, 
-                                            Status nvarchar(20))");
-            cmd.Parameters.AddWithValue("Items", items);
+            var cmd = new SqlCommand("dbo.InsertItem")
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@items", items);
             await SqlCommand.Exec(cmd);
         }
 
@@ -62,16 +61,10 @@ namespace WarehouseRestApi.Controllers
         public async Task Put(int id)
         {
             string items = new StreamReader(Request.Body).ReadToEnd();
-            var cmd = new SqlCommand(
-                                    @"update Items
-                                        set Name = json.Name,
-                                        OwnerId = json.OwnerId,
-                                        Location = json.Location,
-                                        Status = json.Status
-                                    from OPENJSON( @items )
-                                        WITH(Name nvarchar(200), OwnerId int, 
-                                        Location int, Status varchar(20)) AS json
-                                        where Id = @id");
+            var cmd = new SqlCommand("dbo.PutItemById")
+            {
+                CommandType = CommandType.StoredProcedure
+            };
             cmd.Parameters.AddWithValue("id", id);
             cmd.Parameters.AddWithValue("items", items);
             await SqlCommand.Exec(cmd);
@@ -82,17 +75,10 @@ namespace WarehouseRestApi.Controllers
         public async Task Patch(int id)
         {
             string items = new StreamReader(Request.Body).ReadToEnd();
-            var cmd = new SqlCommand(
-                                @"update Items
-                                     set Name = ISNULL(json.Name, Name),
-                                     OwnerId = ISNULL(json.OwnerId, OwnerId),
-                                     Location = ISNULL(json.Location, Location),
-                                     Status = ISNULL(json.Status, Status)
-                                from OPENJSON( @items )
-                                    WITH(Name nvarchar(200), OwnerId int, 
-                                    Location int, Status nvarchar(20)) AS json
-                                where Id = @id
-                                ");
+            var cmd = new SqlCommand("dbo.PatchItemById")
+            {
+                CommandType = CommandType.StoredProcedure
+            };
             cmd.Parameters.AddWithValue("id", id);
             cmd.Parameters.AddWithValue("items", items);
             await SqlCommand.Exec(cmd);
@@ -102,7 +88,10 @@ namespace WarehouseRestApi.Controllers
         [HttpDelete("{id}")]
         public async Task Delete(int id)
         {
-            var cmd = new SqlCommand(@"delete Items where Id = @id");
+            var cmd = new SqlCommand("dbo.DeleteItemById")
+            {
+                CommandType = CommandType.StoredProcedure
+            };
             cmd.Parameters.AddWithValue("id", id);
             await SqlCommand.Exec(cmd);
         }
