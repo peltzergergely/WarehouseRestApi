@@ -1,0 +1,164 @@
+
+CREATE PROCEDURE dbo.DeleteItemById
+	@id NVARCHAR(MAX)
+AS BEGIN
+	delete Items where Id = @id
+END
+
+GO
+
+CREATE PROCEDURE dbo.GetItemById
+	@id NVARCHAR(MAX)
+AS BEGIN
+	SELECT * FROM dbo.Items WHERE Id = @id FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+END
+
+GO
+
+CREATE PROCEDURE dbo.InsertItem(@items NVARCHAR(MAX))
+AS BEGIN
+insert into Items
+select *
+ from OPENJSON(@items)
+  WITH(	Name nvarchar(200), 
+  OwnerId int, 
+  Location int, 
+  Status nvarchar(20))
+END
+
+GO
+
+CREATE PROCEDURE dbo.InsertOrder(@orders NVARCHAR(MAX))
+AS BEGIN
+INSERT INTO dbo.Orders
+SELECT CostumerId,
+       ItemName,
+       Quantity,
+       Status,
+       Direction,
+       TimeStamp
+FROM OPENJSON(@orders)
+	WITH(
+	 CostumerId int,
+     ItemName nvarchar(50),
+     Quantity int,
+     Status nvarchar(20),
+     Direction nvarchar(20),
+     TimeStamp datetime)
+END
+
+GO
+
+CREATE PROCEDURE dbo.InsertTransaction(@transaction NVARCHAR(MAX))
+AS BEGIN
+insert into dbo.Transactions
+  select OrderId,
+         Gate,
+         Time,
+         Location,
+         Direction,
+         TimeStamp,
+         DispatcherId	
+    from OPENJSON(@transaction)
+     WITH(
+      OrderId int,
+      Gate int,
+      Time nvarchar(50),
+      Location int,
+      Direction nvarchar(20),
+      TimeStamp datetime,
+      DispatcherId INT)
+END
+
+GO
+
+CREATE PROCEDURE dbo.PatchItemById
+	@items NVARCHAR(MAX),
+	@id NVARCHAR(MAX)
+AS BEGIN
+    update Items
+          set Name = COALESCE(json.Name, dbo.Items.Name),
+          OwnerId = COALESCE(json.OwnerId, dbo.Items.OwnerId),
+          Location = COALESCE(json.Location, dbo.Items.Location),
+          Status = COALESCE(json.Status, dbo.Items.Status)
+    from OPENJSON( @items )
+          WITH(Name nvarchar(200), OwnerId int, 
+          Location int, Status nvarchar(20)) AS json
+          where Id = @id
+END
+
+GO
+
+CREATE PROCEDURE dbo.PutItemById
+	@items NVARCHAR(MAX),
+	@id NVARCHAR(MAX)
+AS BEGIN
+	update Items
+          set Name = json.Name,
+          OwnerId = json.OwnerId,
+          Location = json.Location,
+          Status = json.Status
+    from OPENJSON( @items )
+          WITH(Name nvarchar(200), OwnerId int, 
+          Location int, Status varchar(20))
+		  AS json
+          where Id = @id
+END
+
+GO
+
+CREATE	PROCEDURE dbo.SelectAllItems
+AS BEGIN
+SELECT * FROM dbo.Items FOR JSON PATH
+END
+
+GO
+
+CREATE PROCEDURE dbo.UpdateOrderById
+	@orders NVARCHAR(MAX),
+	@id NVARCHAR(MAX)
+AS BEGIN
+	update dbo.Orders
+          set CostumerId = json.CostumerId,
+          ItemName = json.ItemName,
+          Quantity = json.Quantity,
+          Status = json.Status,
+          Direction = json.Direction,
+          TimeStamp = json.TimeStamp
+    from OPENJSON( @orders )
+          WITH(CostumerId int,
+          ItemName nvarchar(50),
+          Quantity int,
+          Status nvarchar(20),
+          Direction nvarchar(20),
+          TimeStamp datetime) AS json
+          where Id = @id
+END
+
+GO
+
+CREATE PROCEDURE dbo.UpdateTransactionById
+	@transaction NVARCHAR(MAX),
+	@id NVARCHAR(MAX)
+AS BEGIN
+update dbo.Transactions SET
+		OrderId = json.OrderId,
+       Gate = json.Gate,
+       Time = json.Time,
+       Location = json.Location,
+       Direction = json.Direction,
+       TimeStamp = json.TimeStamp,
+       DispatcherId = json.DispatcherId
+from OPENJSON( @transaction )
+       WITH(
+	   OrderId INT,
+	   Gate INT,
+	   TIME NVARCHAR(50),
+	   Location INT,
+	   Direction NVARCHAR(20),
+	   TIMESTAMP DATETIME,
+       DispatcherId INT
+	   ) 
+	   AS json
+       where Id = @id
+END
