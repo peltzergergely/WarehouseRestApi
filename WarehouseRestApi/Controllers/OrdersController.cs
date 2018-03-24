@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WarehouseRestApi.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Orders")]
+    [Route("api/orders/")]
     public class OrdersController : Controller
     {
         private readonly IQueryPipe SqlPipe;
@@ -30,7 +30,6 @@ namespace WarehouseRestApi.Controllers
         {
             await SqlPipe.Stream("select * from Orders FOR JSON PATH", Response.Body, "[]");
         }
-
 
         // GET: api/Orders/5
         [HttpGet("{id}")]
