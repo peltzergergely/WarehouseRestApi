@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WarehouseRestApi.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Items/")]
+    [Route("api/items")]
     public class ItemsController : Controller
     {
         private readonly IQueryPipe SqlPipe;
@@ -43,6 +43,16 @@ namespace WarehouseRestApi.Controllers
             await SqlPipe.Stream(cmd, Response.Body, "{}");
         }
 
+        // GET: api/Items/ColumnName/ColumnValue
+        [HttpGet("{value1}/{value2}")]
+        public async Task Get(string value1, string value2)
+        {
+            var cmd = new SqlCommand("select * from Items where " + value1 + " = @value " +
+                                        " FOR JSON PATH, WITHOUT_ARRAY_WRAPPER");
+            cmd.Parameters.AddWithValue("value", value2);
+            await SqlPipe.Stream(cmd, Response.Body, "{}");
+        }
+        
         // POST: api/Items
         [HttpPost]
         public async Task Post()
@@ -62,20 +72,6 @@ namespace WarehouseRestApi.Controllers
         {
             string items = new StreamReader(Request.Body).ReadToEnd();
             var cmd = new SqlCommand("dbo.PutItemById")
-            {
-                CommandType = CommandType.StoredProcedure
-            };
-            cmd.Parameters.AddWithValue("id", id);
-            cmd.Parameters.AddWithValue("items", items);
-            await SqlCommand.Exec(cmd);
-        }
-
-        // PATCH api/Items
-        [HttpPatch]
-        public async Task Patch(int id)
-        {
-            string items = new StreamReader(Request.Body).ReadToEnd();
-            var cmd = new SqlCommand("dbo.PatchItemById")
             {
                 CommandType = CommandType.StoredProcedure
             };

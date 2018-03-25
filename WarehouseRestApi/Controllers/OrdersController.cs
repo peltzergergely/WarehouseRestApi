@@ -40,6 +40,15 @@ namespace WarehouseRestApi.Controllers
             await SqlPipe.Stream(cmd, Response.Body, "{}");
         }
 
+        // GET: api/Orders/5
+        [HttpGet("costumer/{id}")]
+        public async Task GetByOwnerId(int id)
+        {
+            var cmd = new SqlCommand("select * from Orders where CostumerId = @id FOR JSON PATH, WITHOUT_ARRAY_WRAPPER");
+            cmd.Parameters.AddWithValue("id", id);
+            await SqlPipe.Stream(cmd, Response.Body, "{}");
+        }
+
         // POST: api/Orders
         [HttpPost]
         public async Task Post()

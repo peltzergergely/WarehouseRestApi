@@ -62,59 +62,11 @@ namespace WarehouseRestApi
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                   "Default",                                              // Route name
+                   "{controller}/{action}/{column}/{value}",                           // URL with parameters
+                   new { controller = "Home", action = "Index", id = "" });
             });
 
-            //routes.MapHttpRoute(
-            //    name: "DefaultApi",
-            //    routeTemplate: "api/{controller}/{category}/{id}",
-            //    defaults: new { category = "all", id = RouteParameter.Optional }
-            //    );
-            //{controller}/{action}/{id}
-
-            //routes.MapHttpRoute("DefaultApiWithId", "Api/{controller}/{id}", new { id = RouteParameter.Optional }, new { id = @"\d+" });
-            //routes.MapHttpRoute("DefaultApiWithAction", "Api/{controller}/{action}");
-            //routes.MapHttpRoute("DefaultApiGet", "Api/{controller}", new { action = "Get" }, new { httpMethod = new HttpMethodConstraint(HttpMethod.Get) });
-            //routes.MapHttpRoute("DefaultApiPost", "Api/{controller}", new { action = "Post" }, new { httpMethod = new HttpMethodConstraint(HttpMethod.Post) });
-
-//            public class TestController : ApiController
-//        {
-//            public string Get()
-//            {
-//                return string.Empty;
-//            }
-
-//            public string Get(int id)
-//            {
-//                return string.Empty;
-//            }
-
-//            public string GetAll()
-//            {
-//                return string.Empty;
-//            }
-
-//            public void Post([FromBody]string value)
-//            {
-//            }
-
-//            public void Put(int id, [FromBody]string value)
-//            {
-//            }
-
-//            public void Delete(int id)
-//            {
-//            }
-//        }
-//        I verified that it supports the following requests:
-
-//          GET /Test
-//          GET /Test/1
-//          GET /Test/GetAll
-//          POST /Test
-//          PUT /Test/1
-//          DELETE /Test/1
         }
     }
 }

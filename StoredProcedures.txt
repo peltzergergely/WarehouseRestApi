@@ -1,3 +1,29 @@
+CREATE PROCEDURE [dbo].CustomerLogin
+	@name NVARCHAR(50),
+	@pw NVARCHAR(50)
+AS
+	select * from Customers where Name = @name AND Pw = @pw FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+RETURN 0
+
+GO
+
+CREATE PROCEDURE [dbo].[PutCustomersById]
+	@customer NVARCHAR(MAX),
+	@id NVARCHAR(MAX)
+AS BEGIN
+	update dbo.Customers
+          set Name = ISNULL(json.Name, dbo.Customers.Name),
+          Pw = ISNULL(json.Pw, dbo.Customers.Pw),
+          AllStorage = ISNULL(json.AllStorage, dbo.Customers.AllStorage),
+          FreeStorage = ISNULL(json.FreeStorage, dbo.Customers.FreeStorage)
+    from OPENJSON( @customer )
+          WITH(Name nvarchar(100), Pw nvarchar(20), 
+          AllStorage int, FreeStorage INT)
+		  AS json
+          where Id = @id
+END
+
+GO
 
 CREATE PROCEDURE dbo.DeleteItemById
 	@id NVARCHAR(MAX)
