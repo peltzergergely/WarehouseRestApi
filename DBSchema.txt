@@ -17,6 +17,11 @@ CREATE TABLE [dbo].[Dispatchers] (
 
 GO
 
+ALTER TABLE [dbo].[Dispatchers]
+ADD [Pw] NVARCHAR (20)  NULL;
+
+GO
+
 CREATE TABLE [dbo].[Items] (
     [Id]       INT            IDENTITY (1, 1) NOT NULL,
     [Name]     NVARCHAR (200) NOT NULL,
@@ -46,6 +51,11 @@ CREATE TABLE [dbo].[Storekeepers] (
     [Name] NCHAR (100) NULL,
     PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+GO
+
+ALTER TABLE [dbo].[Storekeepers]
+ADD [Pw] NVARCHAR (20)  NULL;
 
 GO
 

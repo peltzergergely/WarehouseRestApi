@@ -42,7 +42,7 @@ namespace WarehouseRestApi
         public void ConfigureServices(IServiceCollection services)
         {
 
-            const string ConnString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=WarehouseDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+            const string ConnString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=WarehouseDB2;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
             services.AddTransient<IQueryPipe>(_ => new QueryPipe(new SqlConnection(ConnString)));
             services.AddTransient<ICommand>(_ => new Command(new SqlConnection(ConnString)));

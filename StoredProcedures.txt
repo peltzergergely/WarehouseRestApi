@@ -7,6 +7,24 @@ RETURN 0
 
 GO
 
+CREATE PROCEDURE [dbo].DispatcherLogin
+	@name NVARCHAR(50),
+	@pw NVARCHAR(50)
+AS
+	select * from Dispatchers where Name = @name AND Pw = @pw FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+RETURN 0
+
+GO
+
+CREATE PROCEDURE [dbo].StorekeeperLogin
+	@name NVARCHAR(50),
+	@pw NVARCHAR(50)
+AS
+	select * from Storekeepers where Name = @name AND Pw = @pw FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+RETURN 0
+
+GO
+
 CREATE PROCEDURE [dbo].[PutCustomersById]
 	@customer NVARCHAR(MAX),
 	@id NVARCHAR(MAX)
