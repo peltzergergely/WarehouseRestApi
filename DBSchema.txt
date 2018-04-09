@@ -71,6 +71,11 @@ CREATE TABLE [dbo].[Transactions] (
     PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
+GO
 
+ALTER TABLE [dbo].[Transactions]
+ADD [Status]     NVARCHAR (20) NULL;
+
+GO
 
 

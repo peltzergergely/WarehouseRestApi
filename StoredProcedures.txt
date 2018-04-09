@@ -102,7 +102,8 @@ insert into dbo.Transactions
          Location,
          Direction,
          TimeStamp,
-         DispatcherId	
+         DispatcherId,
+         Status
     from OPENJSON(@transaction)
      WITH(
       OrderId int,
@@ -111,7 +112,8 @@ insert into dbo.Transactions
       Location int,
       Direction nvarchar(20),
       TimeStamp datetime,
-      DispatcherId INT)
+      DispatcherId INT,
+      Status nvarchar(20))
 END
 
 GO
