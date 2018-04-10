@@ -78,4 +78,12 @@ ADD [Status]     NVARCHAR (20) NULL;
 
 GO
 
-
+CREATE TABLE [dbo].[Receipts] (
+    [Id]            INT           IDENTITY (1, 1) NOT NULL,
+    [CostumerId]    INT           NULL,
+    [TransactionId] INT           NULL,
+    [TimeStamp]     DATETIME      NULL,
+    [StorekeeperId] INT           NULL,
+    [Comment]       NVARCHAR (50) NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
+);
