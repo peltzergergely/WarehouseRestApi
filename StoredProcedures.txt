@@ -208,3 +208,22 @@ from OPENJSON( @transaction )
 	   AS json
        where Id = @id
 END
+
+GO
+
+CREATE PROCEDURE dbo.InsertReceipt(@receipts NVARCHAR(MAX))
+AS BEGIN
+INSERT INTO dbo.Receipts
+SELECT CostumerId,
+       TransactionId,
+       TimeStamp,
+       StorekeeperId,
+       Comment
+FROM OPENJSON(@receipts)
+	WITH(
+	 CostumerId int,
+     TransactionId int,
+     TimeStamp datetime,
+     StorekeeperId int,
+     Comment nvarchar(50))
+END
