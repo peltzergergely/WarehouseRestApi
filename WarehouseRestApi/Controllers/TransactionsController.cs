@@ -63,7 +63,7 @@ namespace WarehouseRestApi.Controllers
                 CommandType = CommandType.StoredProcedure
             };
             cmd.Parameters.AddWithValue("id", id);
-            cmd.Parameters.AddWithValue("Transactions", transaction);
+            cmd.Parameters.AddWithValue("transaction", transaction);
             await SqlCommand.Exec(cmd);
         }
 
