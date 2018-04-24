@@ -40,6 +40,15 @@ namespace WarehouseRestApi.Controllers
             await SqlPipe.Stream(cmd, Response.Body, "{}");
         }
 
+        //
+        [HttpGet("{status}")]
+        public async Task Get(string status)
+        {
+            var cmd = new SqlCommand("select * from Transactions where Status = @status FOR JSON PATH, WITHOUT_ARRAY_WRAPPER");
+            cmd.Parameters.AddWithValue("status", status);
+            await SqlPipe.Stream(cmd, Response.Body, "{}");
+        }
+
         // POST: api/Transactions
         [HttpPost]
         public async Task Post()
