@@ -31,6 +31,18 @@ namespace WarehouseRestApi.Controllers
             await SqlPipe.Stream("select * from Customers FOR JSON PATH", Response.Body, "[]");
         }
 
+        // GET: api/customers/id
+        [HttpGet("{id}")]
+        public async Task GetCustomerById(int id)
+        {
+            var cmd = new SqlCommand("dbo.GetCustomerById")
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("id", id);
+            await SqlPipe.Stream(cmd, Response.Body, "{}");
+        }
+
         // GET: api/costumers/name/password
         [HttpGet("{name}/{pw}")]
         public async Task Get(string name, string pw)

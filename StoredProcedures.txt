@@ -59,6 +59,14 @@ END
 
 GO
 
+CREATE PROCEDURE dbo.GetCustomerById
+	@id NVARCHAR(MAX)
+AS BEGIN
+	SELECT * FROM dbo.Customers WHERE Id = @id FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+END
+
+GO
+
 CREATE PROCEDURE dbo.InsertItem(@items NVARCHAR(MAX))
 AS BEGIN
 insert into Items
