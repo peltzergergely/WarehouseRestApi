@@ -33,6 +33,11 @@ CREATE TABLE [dbo].[Items] (
 
 GO
 
+ALTER TABLE [dbo].[Items]
+ADD [OrderId] INT  NULL;
+
+GO
+
 CREATE TABLE [dbo].[Orders] (
     [Id]         INT           IDENTITY (1, 1) NOT NULL,
     [CostumerId] INT           NULL,

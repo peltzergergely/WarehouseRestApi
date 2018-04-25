@@ -46,7 +46,7 @@ GO
 CREATE PROCEDURE dbo.DeleteItemById
 	@id NVARCHAR(MAX)
 AS BEGIN
-	delete Items where Id = @id
+	delete Items where OrderId = @id
 END
 
 GO
@@ -54,7 +54,7 @@ GO
 CREATE PROCEDURE dbo.GetItemById
 	@id NVARCHAR(MAX)
 AS BEGIN
-	SELECT * FROM dbo.Items WHERE Id = @id FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+	SELECT * FROM dbo.Items WHERE OrderId = @id FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 END
 
 GO
@@ -75,7 +75,8 @@ select *
   WITH(	Name nvarchar(200), 
   OwnerId int, 
   Location int, 
-  Status nvarchar(20))
+  Status nvarchar(20),
+  OrderId int)
 END
 
 GO
@@ -156,7 +157,7 @@ AS BEGIN
           WITH(Name nvarchar(200), OwnerId int, 
           Location int, Status varchar(20))
 		  AS json
-          where Id = @id
+          where OrderId = @id
 END
 
 GO
