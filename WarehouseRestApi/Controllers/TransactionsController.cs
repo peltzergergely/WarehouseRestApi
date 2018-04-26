@@ -42,7 +42,7 @@ namespace WarehouseRestApi.Controllers
 
         //
         [HttpGet("{status}")]
-        public async Task Get(string status)
+        public async Task GetByStatus(string status)
         {
             var cmd = new SqlCommand("select * from Transactions where Status = @status FOR JSON PATH, WITHOUT_ARRAY_WRAPPER");
             cmd.Parameters.AddWithValue("status", status);
