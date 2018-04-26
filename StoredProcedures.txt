@@ -46,7 +46,7 @@ GO
 CREATE PROCEDURE dbo.DeleteItemById
 	@id NVARCHAR(MAX)
 AS BEGIN
-	delete Items where OrderId = @id
+	delete Items where Location = @id
 END
 
 GO
